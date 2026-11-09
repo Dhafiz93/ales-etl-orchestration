@@ -1,0 +1,17 @@
+services:
+  airflow:
+    image: apache/airflow:2.7.1-python3.11
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./requirements.txt:/requirements.txt
+      # ON CHANGE ICI : On monte un dossier 'data' au lieu d'un fichier direct
+      - ./airflow_data:/opt/airflow/data
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor 
+      # ON CHANGE ICI : La base de données sera DANS le dossier data
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/data/airflow.db
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - _PIP_ADDITIONAL_REQUIREMENTS=-r /requirements.txt
+    command: standalone
